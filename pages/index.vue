@@ -194,10 +194,6 @@ function clearWorkspace() {
         @dragleave="isDragging = false"
         @drop.prevent="handleDrop"
       >
-        <div class="drop-zone-copy">
-          <strong>{{ hasSelection ? "Change mounted source" : "Nothing mounted" }}</strong>
-          <span v-if="hasSelection">Choose a different source for web:/</span>
-        </div>
         <div class="drop-actions">
           <button class="secondary-button emphasis focus-ring" type="button" @click="chooseFile">Choose NSP(s)</button>
           <button class="secondary-button focus-ring" type="button" @click="chooseFolder">Choose folder</button>

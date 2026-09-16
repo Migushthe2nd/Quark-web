@@ -182,9 +182,6 @@ h2 { margin-bottom: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02e
   transition: border-color 140ms ease, background-color 140ms ease;
 }
 .drop-zone.dragging { color: var(--accent); background: var(--accent-soft); border-color: rgba(184, 255, 74, 0.55); }
-.drop-zone-copy { display: grid; gap: 5px; text-align: center; }
-.drop-zone-copy strong { color: var(--text); font-size: 14px; }
-.drop-zone-copy span { font-size: 11px; }
 .drop-hint { color: var(--faint); font-size: 10px; }
 
 .advanced { margin: 0 20px; padding: 15px 0 0; border-top: 1px solid var(--line); }
