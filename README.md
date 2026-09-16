@@ -1,4 +1,4 @@
-# Quark web bridge
+# Quark web bridge for Goldleaf
 
 A Nuxt/Vue WebUSB client that exposes a browser-selected `.nsp` file or folder of `.nsp` files as the Goldleaf **Remote PC** filesystem. The UI uses Una UI with its UnoCSS-powered Nuxt module.
 
@@ -18,7 +18,7 @@ npm run generate
 npm run preview
 ```
 
-The browser workspace is mounted at `web:/`, a virtual root name used only by Goldleaf’s file browser—not a URL or a folder on disk. A single selected NSP also answers Goldleaf’s **Select file** request, so it can be opened directly from the console’s install flow.
+The browser workspace is mounted at `web:/`, a virtual root name used only by Goldleaf’s file browser—not a URL or a folder on disk. When Goldleaf sends **Select file from PC**, the page opens the NSP file picker. Choose an NSP and the bridge exposes it to Goldleaf for the install flow; canceling the picker cancels the request.
 
 Remote URLs are fetched on demand as Goldleaf requests byte ranges, so the full NSP is not saved locally first. The remote server must allow CORS and HTTP byte-range requests.
 
