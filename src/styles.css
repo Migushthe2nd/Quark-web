@@ -61,6 +61,10 @@ h2 { margin-bottom: 0; font-size: 14px; font-weight: 700; letter-spacing: -0.02e
 }
 .connection-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 .connection-title-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.app-title { display: flex; align-items: center; gap: 9px; }
+.repo-link { display: inline-grid; width: 18px; height: 18px; place-items: center; color: var(--muted); border-radius: 4px; }
+.repo-link:hover { color: var(--accent); }
+.repo-link svg { width: 16px; height: 16px; fill: currentColor; }
 .connection-state, .workspace-state {
   display: inline-flex;
   align-items: center;
