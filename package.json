@@ -1,0 +1,21 @@
+{
+  "name": "quark-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.133",
+    "@iconify-json/radix-icons": "^1.2.6",
+    "@iconify-json/tabler": "^1.2.38",
+    "@una-ui/nuxt": "^1.0.0-alpha.27",
+    "@unocss/nuxt": "^66.10.5",
+    "nuxt": "^3.21.11"
+  }
+}
