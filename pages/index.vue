@@ -109,7 +109,7 @@ function clearWorkspace() {
           <div class="app-title">
             <h1 id="connection-title">Quark Web Bridge for Goldleaf</h1>
             <a
-              class="repo-link focus-ring"
+              class="repo-link"
               href="https://github.com/Migushthe2nd/Quark-web"
               target="_blank"
               rel="noopener noreferrer"
@@ -130,7 +130,7 @@ function clearWorkspace() {
           {{ connection.label }}
         </span>
         <button
-          class="primary-button focus-ring"
+          class="primary-button"
           type="button"
           :disabled="connection.mode === 'pending'"
           :aria-busy="connection.mode === 'pending'"
@@ -162,8 +162,8 @@ function clearWorkspace() {
           <strong>Select an NSP from this PC</strong>
         </div>
         <div class="request-actions">
-          <button class="secondary-button emphasis focus-ring" type="button" @click="openFilePicker(requestFileInput)">Select file</button>
-          <button class="text-button focus-ring" type="button" @click="cancelPendingFilePicker">Cancel</button>
+          <button class="secondary-button emphasis" type="button" @click="openFilePicker(requestFileInput)">Select file</button>
+          <button class="text-button" type="button" @click="cancelPendingFilePicker">Cancel</button>
         </div>
       </div>
 
@@ -174,7 +174,7 @@ function clearWorkspace() {
             <strong :title="selectionName">{{ selectionName }}</strong>
             <span class="source-meta">{{ selectionType }} · {{ totalSize }}</span>
           </div>
-          <button class="text-button focus-ring" type="button" @click="clearWorkspace">Clear</button>
+          <button class="text-button" type="button" @click="clearWorkspace">Clear</button>
         </div>
 
         <div class="stats" aria-label="Workspace summary">
@@ -208,8 +208,8 @@ function clearWorkspace() {
         @drop.prevent="handleDrop"
       >
         <div class="drop-actions">
-          <button class="secondary-button emphasis focus-ring" type="button" @click="chooseFile">Choose NSP(s)</button>
-          <button class="secondary-button focus-ring" type="button" @click="chooseFolder">Choose folder</button>
+          <button class="secondary-button emphasis" type="button" @click="chooseFile">Choose NSP(s)</button>
+          <button class="secondary-button" type="button" @click="chooseFolder">Choose folder</button>
         </div>
         <small class="drop-hint">or drop NSP file(s) here</small>
       </div>
@@ -239,7 +239,7 @@ function clearWorkspace() {
               placeholder="game.nsp"
             />
           </div>
-          <button class="secondary-button focus-ring" type="submit" :disabled="addingRemote">
+          <button class="secondary-button" type="submit" :disabled="addingRemote">
             {{ addingRemote ? "Checking URL…" : "Link NSP" }}
           </button>
         </form>

@@ -1,7 +1,6 @@
 export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: false },
-  modules: ["@una-ui/nuxt"],
   css: ["~/src/styles.css"],
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || "/",
