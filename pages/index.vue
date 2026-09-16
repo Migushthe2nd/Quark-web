@@ -8,6 +8,24 @@ const remoteUrl = ref("");
 const remoteName = ref("");
 const addingRemote = ref(false);
 const isDragging = ref(false);
+const filePickerRequested = ref(false);
+
+let pendingFilePicker: ((file: File | null) => void) | null = null;
+
+function openFilePicker() {
+  if (!fileInput.value) return;
+  fileInput.value.value = "";
+  fileInput.value.click();
+}
+
+function requestFileFromPc() {
+  return new Promise<File | null>((resolve) => {
+    pendingFilePicker?.(null);
+    pendingFilePicker = resolve;
+    filePickerRequested.value = true;
+    openFilePicker();
+  });
+}
 
 const {
   addRemoteUrl,
@@ -26,10 +44,10 @@ const {
   totalSize,
   toggleConnection,
   visibleFiles,
-} = useQuarkBridge();
+} = useQuarkBridge(requestFileFromPc);
 
 function chooseFile() {
-  fileInput.value?.click();
+  openFilePicker();
 }
 
 function chooseFolder() {
@@ -37,7 +55,23 @@ function chooseFolder() {
 }
 
 function handleFileChange(event: Event, kind: "file" | "folder") {
-  chooseFiles((event.target as HTMLInputElement).files, kind);
+  const files = (event.target as HTMLInputElement).files;
+  if (kind === "file" && pendingFilePicker) {
+    const resolve = pendingFilePicker;
+    pendingFilePicker = null;
+    filePickerRequested.value = false;
+    resolve(files?.[0] || null);
+    return;
+  }
+  chooseFiles(files, kind);
+}
+
+function cancelPendingFilePicker() {
+  if (!pendingFilePicker) return;
+  const resolve = pendingFilePicker;
+  pendingFilePicker = null;
+  filePickerRequested.value = false;
+  resolve(null);
 }
 
 function handleDrop(event: DragEvent) {
@@ -64,6 +98,7 @@ async function handleRemoteSubmit() {
 }
 
 function clearWorkspace() {
+  cancelPendingFilePicker();
   clearSelection();
   if (fileInput.value) fileInput.value.value = "";
   if (folderInput.value) folderInput.value.value = "";
@@ -81,14 +116,22 @@ function clearWorkspace() {
         </div>
         <span class="workspace-path">web:/</span>
       </div>
-      <p class="helper">Select an NSP file or a folder containing NSP files.</p>
+      <p class="helper">Choose an NSP file or folder now, or connect and choose one from Goldleaf.</p>
 
       <div class="actions">
         <button class="secondary-button focus-ring" type="button" @click="chooseFile">Choose NSP file</button>
         <button class="secondary-button focus-ring" type="button" @click="chooseFolder">Choose folder</button>
         <button v-if="hasSelection" class="text-button focus-ring" type="button" @click="clearWorkspace">Clear</button>
-        <input ref="fileInput" type="file" accept=".nsp" hidden @change="handleFileChange($event, 'file')" />
+        <input ref="fileInput" type="file" accept=".nsp" hidden @cancel="cancelPendingFilePicker" @change="handleFileChange($event, 'file')" />
         <input ref="folderInput" type="file" webkitdirectory directory multiple hidden @change="handleFileChange($event, 'folder')" />
+      </div>
+
+      <div v-if="filePickerRequested" class="file-picker-request" role="status" aria-live="polite">
+        <span>Goldleaf is requesting an NSP file.</span>
+        <div class="request-actions">
+          <button class="secondary-button focus-ring" type="button" @click="openFilePicker">Select file from PC</button>
+          <button class="text-button focus-ring" type="button" @click="cancelPendingFilePicker">Cancel</button>
+        </div>
       </div>
 
       <div
@@ -136,7 +179,7 @@ function clearWorkspace() {
       </details>
 
       <div v-if="!hasSelection" class="empty-state">
-        No NSP selected.
+        No NSP selected yet.
       </div>
 
       <div v-else class="selection" aria-live="polite">
@@ -154,7 +197,7 @@ function clearWorkspace() {
           <div><strong>{{ totalSize }}</strong><span>size</span></div>
         </div>
 
-        <ul class="file-list">
+        <ul v-if="selectionType === 'Folder' || fileCount > 1" class="file-list">
           <li v-for="file in visibleFiles" :key="file.path">
             <span class="file-icon" aria-hidden="true">N</span>
             <span class="file-name" :title="file.path">{{ file.path }}</span>

@@ -79,6 +79,8 @@ type Activity = {
   kind: ActivityKind;
 };
 
+type FilePicker = () => Promise<BridgeFile | null>;
+
 function errorMessage(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
 }
@@ -104,13 +106,13 @@ function rootLabel(files: BridgeFile[], kind: SelectionKind | null) {
   return `${files.length} files`;
 }
 
-export function useQuarkBridge() {
+export function useQuarkBridge(requestFileFromPc?: FilePicker) {
   const connection = reactive({
     mode: "idle" as ConnectionMode,
     label: "Offline",
     badge: "Not linked",
     deviceTitle: "Waiting for Goldleaf",
-    deviceDetail: "Choose an NSP file first, then connect the console with Goldleaf open.",
+    deviceDetail: "Connect the console with Goldleaf open. You can choose an NSP here or from Goldleaf.",
     buttonLabel: "Connect Goldleaf",
     workspaceStatus: "Ready to expose over USB",
   });
@@ -121,7 +123,7 @@ export function useQuarkBridge() {
   const toast = ref("");
   const selectedFiles = shallowRef<BridgeFile[]>([]);
   const selectionKind = ref<SelectionKind | null>(null);
-  const virtualFileSystem = shallowRef<ReturnType<typeof createVirtualFileSystem> | null>(null);
+  const virtualFileSystem = shallowRef(createVirtualFileSystem());
   const connected = ref(false);
   const listening = ref(false);
   const device = shallowRef<UsbDevice | null>(null);
@@ -215,17 +217,8 @@ export function useQuarkBridge() {
   function clearSelection() {
     selectedFiles.value = [];
     selectionKind.value = null;
-    virtualFileSystem.value = null;
+    virtualFileSystem.value = createVirtualFileSystem();
     addActivity("Workspace cleared", "muted");
-  }
-
-  function ensureFileSystem() {
-    if (!virtualFileSystem.value) {
-      showToast("Choose an .nsp file or folder before connecting.");
-      setConnectionState("idle", "Waiting for an NSP", "The browser workspace is empty.");
-      return false;
-    }
-    return true;
   }
 
   function safeNumber(value: bigint, label: string) {
@@ -265,7 +258,7 @@ export function useQuarkBridge() {
 
   async function handleGetDriveInfo(reader: BlockReader, activeDevice: UsbDevice) {
     const driveIndex = reader.readUint32();
-    if (driveIndex !== 0 || !virtualFileSystem.value) {
+    if (driveIndex !== 0) {
       await sendResponse(activeDevice, RESULT.INVALID_INDEX);
       return;
     }
@@ -383,10 +376,22 @@ export function useQuarkBridge() {
   }
 
   async function handleSelectFile(activeDevice: UsbDevice) {
-    if (selectionKind.value === "folder" || !virtualFileSystem.value?.filePaths.length) {
+    const selectedFile = requestFileFromPc
+      ? await requestFileFromPc()
+      : selectionKind.value === "folder"
+        ? null
+        : selectedFiles.value[0] || null;
+
+    if (!selectedFile || !selectedFile.name.toLowerCase().endsWith(".nsp")) {
+      if (selectedFile) {
+        addActivity("Selection skipped: choose an .nsp file", "warning");
+        showToast("Choose an .nsp file.");
+      }
       await sendResponse(activeDevice, RESULT.SELECTION_CANCELLED);
       return;
     }
+
+    chooseFiles([selectedFile], "file");
     await sendResponse(activeDevice, RESULT.SUCCESS, (writer) => writer.writeString(toRemotePath(virtualFileSystem.value?.filePaths[0] || "")));
   }
 
@@ -408,7 +413,7 @@ export function useQuarkBridge() {
 
       switch (commandId) {
         case COMMAND.GET_DRIVE_COUNT:
-          await respond(RESULT.SUCCESS, (writer) => writer.writeUint32(virtualFileSystem.value ? 1 : 0));
+          await respond(RESULT.SUCCESS, (writer) => writer.writeUint32(1));
           break;
         case COMMAND.GET_DRIVE_INFO:
           await handleGetDriveInfo(reader, activeDevice);
@@ -503,7 +508,6 @@ export function useQuarkBridge() {
       showToast("This browser does not expose WebUSB.");
       return;
     }
-    if (!ensureFileSystem()) return;
 
     setConnectionState("pending", "Waiting for Goldleaf", "Choose the Goldleaf device in the browser dialog.");
     let openedDevice: UsbDevice | null = null;
@@ -566,7 +570,7 @@ export function useQuarkBridge() {
       }
     }
     if (!silent) {
-      setConnectionState("idle", "Waiting for Goldleaf", "Choose an NSP, then connect the console with Goldleaf open.");
+      setConnectionState("idle", "Waiting for Goldleaf", "Connect the console with Goldleaf open. You can choose an NSP here or from Goldleaf.");
       addActivity("Goldleaf disconnected", "muted");
     }
   }

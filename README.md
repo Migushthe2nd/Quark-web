@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open the local URL in Chrome or Edge. Choose an NSP file or folder of NSPs, or open **Advanced: add an NSP URL** to use a direct remote link. Then connect the console over USB, open Goldleaf, and select **Explore → Remote PC → Browser workspace**.
+Open the local URL in Chrome or Edge, then connect the console over USB with Goldleaf open. You can choose an NSP file or folder here, open **Advanced: add an NSP URL**, or choose one later from Goldleaf with **Select file from PC**. Browse it under **Explore → Remote PC → Browser workspace**.
 
 For a production static build:
 
