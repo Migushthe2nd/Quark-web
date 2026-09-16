@@ -32,4 +32,7 @@ This MVP lets Goldleaf browse and read the selected NSP files. It does not let G
 - Goldleaf must already be running on the console.
 - The client targets Goldleaf’s USB device (`0x057e:0x3000`) and bulk endpoint 1 in both directions.
 - GitHub Pages deployment is defined in `.github/workflows/deploy.yml` and runs on `main`.
-- Goldleaf itself is GPL-3.0 licensed; review the upstream license before distributing a combined product.
+
+## License
+
+This project is licensed under GPL-3.0-only. See [LICENSE](LICENSE).
