@@ -48,16 +48,6 @@ jobs:
         with:
           static_site_generator: nuxt
 
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            dist
-            .nuxt
-          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('package-lock.json', 'nuxt.config.ts', 'pages/**', 'composables/**') }}
-          restore-keys: |
-            ${{ runner.os }}-nuxt-build-
-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
 
