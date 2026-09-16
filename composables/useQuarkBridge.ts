@@ -138,7 +138,9 @@ export function useQuarkBridge(requestFileFromPc?: FilePicker) {
 
   const hasSelection = computed(() => Boolean(virtualFileSystem.value?.filePaths.length));
   const selectionName = computed(() => rootLabel(selectedFiles.value, selectionKind.value));
-  const selectionType = computed(() => (selectionKind.value === "folder" ? "Folder" : selectionKind.value === "url" ? "URL" : "File"));
+  const selectionType = computed(() =>
+    selectionKind.value === "folder" ? "Folder" : selectionKind.value === "url" ? "URL" : selectedFiles.value.length > 1 ? "Files" : "File",
+  );
   const filePaths = computed(() => virtualFileSystem.value?.filePaths || []);
   const visibleFiles = computed(() =>
     filePaths.value.slice(0, 7).map((path) => ({
@@ -190,12 +192,13 @@ export function useQuarkBridge(requestFileFromPc?: FilePicker) {
     selectedFiles.value = nspFiles;
     selectionKind.value = kind;
     virtualFileSystem.value = createVirtualFileSystem(nspFiles);
+    const sourceLabel = kind === "folder" ? "NSP folder" : nspFiles.length === 1 ? "NSP file" : "NSP files";
     if (nspFiles.length !== files.length) {
       const skipped = files.length - nspFiles.length;
       addActivity(`Skipped ${skipped} non-NSP file${skipped === 1 ? "" : "s"}`, "warning");
     }
-    addActivity(`${kind === "folder" ? "NSP folder" : "NSP file"} mounted in browser workspace`, "success");
-    showToast(`${kind === "folder" ? "NSP folder" : "NSP file"} ready at ${REMOTE_ROOT}:/`);
+    addActivity(`${sourceLabel} mounted in browser workspace`, "success");
+    showToast(`${sourceLabel} ready at ${REMOTE_ROOT}:/`);
   }
 
   async function addRemoteUrl(url: string, requestedName = "") {

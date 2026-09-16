@@ -1,4 +1,4 @@
-# Quark web bridge for Goldleaf
+# Quark Web Bridge for Goldleaf
 
 A Nuxt/Vue WebUSB client that exposes a browser-selected `.nsp` file or folder of `.nsp` files as the Goldleaf **Remote PC** filesystem. The UI uses Una UI with its UnoCSS-powered Nuxt module.
 
