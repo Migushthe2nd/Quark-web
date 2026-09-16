@@ -2,6 +2,8 @@
 
 A Nuxt/Vue WebUSB client that exposes a browser-selected `.nsp` file or folder of `.nsp` files as the Goldleaf **Remote PC** filesystem. The UI uses Una UI with its UnoCSS-powered Nuxt module.
 
+Thanks to [XorTroll](https://github.com/XorTroll) for [Goldleaf](https://github.com/XorTroll/Goldleaf) and the Quark/Remote PC protocol this bridge connects to.
+
 ## Run
 
 ```sh
